@@ -60,6 +60,45 @@ describe(`Bookmarks service object`, function () {
         })
 
     })
+    it(`getById() resolves an article by id from 'bookmarks_list' table`, () => {
+      const expectedBookmarkId = 1
+      const expectedBookmark = testBookmarks.find(a => a.id === expectedBookmarkId);
+      console.log(expectedBookmarkId);
+      /* const thirdTestBookmark = testBookmarks[thirdId - 1] */
+      return BookmarksService.getById(db, expectedBookmarkId)
+        .then(actual => {
+          console.log(actual)
+          expect(actual).to.eql(expectedBookmark)
+        })
+
+    })
+    it(`deleteArticle() removes an article by id from 'blogful_articles' table`, () => {
+      const bookmarkId = 3
+      return BookmarksService.deleteBookmark(db, bookmarkId)
+        .then(() => BookmarksService.getAllBookmarks(db))
+        .then(allBookmarks => {
+          // copy the test articles array without the "deleted" article
+          const expected = testBookmarks.filter(bookmark => bookmark.id !== bookmarkId)
+          expect(allBookmarks).to.eql(expected)
+        })
+    })
+    it(`updateArticle() updates an article from the 'blogful_articles' table`, () => {
+      const idOfBookmarkToUpdate = 5
+      const newBookmarkData = {
+        title: 'MDN',
+        url: 'https://www.mdn.org',
+        description: 'good information to learn',
+      }
+      return BookmarksService.updateBookmark(db, idOfBookmarkToUpdate, newBookmarkData)
+        .then(() => BookmarksService.getById(db, idOfBookmarkToUpdate))
+        .then(bookmark => {
+          console.log(newBookmarkData)
+          expect(bookmark).to.eql({
+            id: idOfBookmarkToUpdate,
+            ...newBookmarkData,
+          })
+        })
+    })
   })
   context(`Given 'bookmarks_list' has no data`, () => {
     it(`getBookmarks() resolves an empty array`, () => {
@@ -69,69 +108,30 @@ describe(`Bookmarks service object`, function () {
         })
     })
   })
-  /* it(`insertArticle() inserts a new article and resolves the new article with an 'id'`, () => {
+  it(`insertArticle() inserts a new article and resolves the new article with an 'id'`, () => {
     const newBookmark = {
-      id,
-      title,
-      url,
-      description,
-      rating,
-  } 
+      id: 1,
+      title: 'Code-Academy',
+      url: 'http://codeacadamy.com',
+      description: 'coding school',
+      rating: '4',
+    }
     return BookmarksService.insertBookmark(db, newBookmark)
       .then(actual => {
-      expect(actual).to.eql({
-        id: 1,
-        title: 'Code-Academy',
-        url:'http://codeacadamy.com',
-        description: 'coding school',
-        rating: '4',
+        expect(actual).to.eql({
+          id: 1,
+          title: 'Code-Academy',
+          url: 'http://codeacadamy.com',
+          description: 'coding school',
+          rating: '4',
+        })
       })
-    }) 
-   }) */
-  it(`getById() resolves an article by id from 'bookmarks_list' table`, () => {
-    const expectedBookmarkId =3 
-    const expectedBookmark = testBookmarks.find(a => a.id === expectedBookmarkId);
-    /* const thirdTestBookmark = testBookmarks[thirdId - 1] */
-    return BookmarksService.getById(db, expectedBookmarkId)
-      .then(actual => {
-        expect(actual).to.eql(expectedBookmark)
-          /* id: thirdId,
-          title: thirdTestBookmark.title,
-          url: thirdTestBookmark.url,
-          description: thirdTestBookmark.content,
-          rating: thirdTestBookmark.rating, */
-      
-      })
-    /* return supertest(app)
-        .get(`/bookmarkss/${thirdId}`)
-        .expect(200, expectedBookmark)
-    }) */
+
   })
-  it(`deleteArticle() removes an article by id from 'blogful_articles' table`, () => {
-     const bookmarkId = 3
-     return BookmarksService.deleteBookmark(db, bookmarkId)
-       .then(() => BookmarksService.getAllBookmarks(db))
-       .then(allBookmarks => {
-         // copy the test articles array without the "deleted" article
-         const expected = testBookmarks.filter(bookmark => bookmark.id !== bookmarkId)
-         expect(allBookmarks).to.eql(expected)
-       })
-   })
-   it(`updateArticle() updates an article from the 'blogful_articles' table`, () => {
-    const idOfBookmarkToUpdate = 3
-     const newBookmarkData = {
-       title: 'MDN',
-       url: 'https://www.mdn.org',
-       description: 'good information to learn',
-     }
-     return BookmarksService.updateBookmark(db, idOfBookmarkToUpdate, newBookmarkData)
-       .then(() => BookmarksService.getById(db, idOfBookmarkToUpdate))
-       .then(bookmark => {
-         expect(bookmark).to.eql(expected)
-       })
-   })
+
+
 
 })
-  
+
 
 

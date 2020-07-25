@@ -18,12 +18,12 @@ app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
 
-/* app.get('/', (req, res) => {
-   res.send('Hello, boilerplate!!')
-}) */
+ app.get('/', (req, res) => {
+   res.send('Hello, bookmark!!')
+}) 
  app.get('/bookmarks', (req, res, next) => {
   const knexInstance = req.app.get('db')
--
+
  /*  res.send('All bookmarks') */
    BookmarksService.getAllBookmarks(knexInstance)
      .then(bookmarks => {
@@ -33,6 +33,16 @@ app.use(cors())
  
  })
 
+app.get('/articles/:article_id', (req, res, next) => {
+  /* res.json({ 'requested_id': req.params.bookmark_id, this: 'should fail' }) */
+  const knexInstance = req.app.get('db')
+     BookmarksService.getById(knexInstance, req.params.bookmark_id)
+         .then(bookmark => {
+             res.json(bookmark)
+             })
+         .catch(next)
+
+     })
 
 app.use(function errorHandler(error, req, res, next) {
    
