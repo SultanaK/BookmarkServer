@@ -18,44 +18,51 @@ app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
 
- app.get('/', (req, res) => {
-   res.send('Hello, bookmark!!')
-}) 
- app.get('/bookmarks', (req, res, next) => {
+app.get('/', (req, res) => {
+  res.send('Hello, bookmark!!')
+})
+app.get('/bookmarks', (req, res, next) => {
   const knexInstance = req.app.get('db')
 
- /*  res.send('All bookmarks') */
-   BookmarksService.getAllBookmarks(knexInstance)
-     .then(bookmarks => {
-       res.json(bookmarks)
-     })
-     .catch(next)
- 
- })
+  /*  res.send('All bookmarks') */
+  BookmarksService.getAllBookmarks(knexInstance)
+    .then(bookmarks => {
+      
 
-app.get('/articles/:article_id', (req, res, next) => {
+      res.json(bookmarks)
+    })
+    .catch(next)
+
+})
+
+app.get('/bookmarks/:bookmark_id', (req, res, next) => {
   /* res.json({ 'requested_id': req.params.bookmark_id, this: 'should fail' }) */
   const knexInstance = req.app.get('db')
-     BookmarksService.getById(knexInstance, req.params.bookmark_id)
-         .then(bookmark => {
-             res.json(bookmark)
-             })
-         .catch(next)
+  BookmarksService.getById(knexInstance, req.params.bookmark_id)
+    .then(bookmark => {
+      if (!bookmark) {
+        return res.status(404).json({
+          error: { message: `Bookmark doesn't exist` }
+        })
+      }
+      res.json(bookmark)
+    })
+    .catch(next)
 
-     })
+})
 
 app.use(function errorHandler(error, req, res, next) {
-   
-   let response
-   if (NODE_ENV === 'production') {
-     response = { error: { message: 'server error' } }
-   } else {
-     console.error(error)
-     response = { message: error.message, error }
-   }
-   res.status(500).json(response)
 
- })
+  let response
+  if (NODE_ENV === 'production') {
+    response = { error: { message: 'server error' } }
+  } else {
+    console.error(error)
+    response = { message: error.message, error }
+  }
+  res.status(500).json(response)
+
+})
 
 
 module.exports = app;
