@@ -1,4 +1,4 @@
-const BookmarksService = require('../src/bookmarks-service')
+const BookmarksService = require('../src/bookmarks/bookmarks-service')
 const knex = require('knex')
 
 describe(`Bookmarks service object`, function () {
@@ -43,16 +43,16 @@ describe(`Bookmarks service object`, function () {
 
   after(() => db.destroy())
 
-  /* describe(`getAllArticles()`, () => { */
+  /* describe(`getAllbookmarks()`, () => { */
   context(`Given 'bookmarks_new' table has data`, () => {
     beforeEach(() => {
       return db
         .into('bookmarks_list')
         .insert(testBookmarks)
     })
-    /* it(`resolves all articles from 'blogful_articles' table`, () => { */
-    it(`getAllBookmarks() resolves all articles from 'bookmarks_new' table`, () => {
-      // test that ArticlesService.getAllArticles gets data from table
+    /* it(`resolves all bookmarks from 'blogful_bookmarks' table`, () => { */
+    it(`getAllBookmarks() resolves all bookmarks from 'bookmarks_new' table`, () => {
+      // test that bookmarksService.getAllbookmarks gets data from table
       return BookmarksService.getAllBookmarks(db)
         .then(actual => {
           expect(actual).to.eql(testBookmarks)
@@ -60,7 +60,7 @@ describe(`Bookmarks service object`, function () {
         })
 
     })
-    it(`getById() resolves an article by id from 'bookmarks_list' table`, () => {
+    it(`getById() resolves an bookmark by id from 'bookmarks_list' table`, () => {
       const expectedBookmarkId = 1
       const expectedBookmark = testBookmarks.find(a => a.id === expectedBookmarkId);
       console.log(expectedBookmarkId);
@@ -72,17 +72,17 @@ describe(`Bookmarks service object`, function () {
         })
 
     })
-    it(`deleteArticle() removes an article by id from 'blogful_articles' table`, () => {
+    it(`deletebookmark() removes an bookmark by id from 'blogful_bookmarks' table`, () => {
       const bookmarkId = 3
       return BookmarksService.deleteBookmark(db, bookmarkId)
         .then(() => BookmarksService.getAllBookmarks(db))
         .then(allBookmarks => {
-          // copy the test articles array without the "deleted" article
+          // copy the test bookmarks array without the "deleted" bookmark
           const expected = testBookmarks.filter(bookmark => bookmark.id !== bookmarkId)
           expect(allBookmarks).to.eql(expected)
         })
     })
-    it(`updateArticle() updates an article from the 'blogful_articles' table`, () => {
+    it(`updatebookmark() updates an bookmark from the 'blogful_bookmarks' table`, () => {
       const idOfBookmarkToUpdate = 5
       const newBookmarkData = {
         title: 'MDN',
@@ -108,7 +108,7 @@ describe(`Bookmarks service object`, function () {
         })
     })
   })
-  it(`insertArticle() inserts a new article and resolves the new article with an 'id'`, () => {
+  it(`insertbookmark() inserts a new bookmark and resolves the new bookmark with an 'id'`, () => {
     const newBookmark = {
       id: 1,
       title: 'Code-Academy',
